@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your New Year 2025 Wish</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1 id="wishGreeting">🎉 Happy New Year 2025! 🎉</h1>
+        <p id="wishMessage"></p>
+        <button id="backBtn">Back to Enter Name</button>
+    </div>
+
+    <!-- Fireworks canvas -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <script>
+        // Get the name from the query parameters in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const userName = urlParams.get('name');
+
+        if (userName) {
+            document.getElementById('wishGreeting').textContent = `🎉 Happy New Year 2025 🎉  ${userName}! ❤️‍🔥`;
+            document.getElementById('wishMessage').textContent = "Here's to another year of making memories together. May our friendship grow even stronger in the coming year. 🥳 Happy New Year!🥳";
+        }
+
+        // Go back to the first page when the button is clicked
+        document.getElementById('backBtn').addEventListener('click', function () {
+            // Ensure the user goes back to the index.html page
+            window.location.href = 'index.html';
+        });
+
+        // Fireworks animation code
+        const canvas = document.getElementById('fireworksCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function Firework(x, y) {
+            this.x = x;
+            this.y = y;
+            this.particles = [];
+            
+
+            for (let i = 0; i < 100; i++) {
+                const angle = Math.random() * 2 * Math.PI;
+                const speed = Math.random() * 3 + 1;
+                const velocityX = Math.cos(angle) * speed;
+                const velocityY = Math.sin(angle) * speed;
+                this.particles.push({ x: this.x, y: this.y, velocityX, velocityY, opacity: 1 });
+            }
+        }
+
+        Firework.prototype.update = function () {
+            for (let i = 0; i < this.particles.length; i++) {
+                let particle = this.particles[i];
+                particle.x += particle.velocityX;
+                particle.y += particle.velocityY;
+                particle.opacity -= 0.02;
+
+                if (particle.opacity <= 0) {
+                    this.particles.splice(i, 1);
+                    i--;
+                }
+            }
+        };
+
+        Firework.prototype.draw = function () {
+            for (let i = 0; i < this.particles.length; i++) {
+                let particle = this.particles[i];
+                ctx.beginPath();
+                ctx.arc(particle.x, particle.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 0, 0, ${particle.opacity})`;
+                ctx.fill();
+            }
+        };
+
+        let fireworks = [];
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (Math.random() < 0.1) {
+                fireworks.push(new Firework(Math.random() * canvas.width, Math.random() * canvas.height));
+            }
+
+            for (let i = 0; i < fireworks.length; i++) {
+                fireworks[i].update();
+                fireworks[i].draw();
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate(); // Start the fireworks animation
+    </script>
+</body>
+
+</html>
